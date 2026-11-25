@@ -1,0 +1,19 @@
+name: validate
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+      - name: Validate manifest
+        run: python3 -m json.tool maomao-trusted-checks.json >/dev/null
+      - name: Compile Python wrappers
+        run: python3 -m py_compile checks/secrets/gitleaks.py checks/security/semgrep.py
