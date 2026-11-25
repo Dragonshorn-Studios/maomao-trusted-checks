@@ -34,7 +34,7 @@ def main():
     with tempfile.TemporaryDirectory() as temp:
         raw_path = os.path.join(temp, "semgrep.json")
         proc = subprocess.run(
-            [semgrep, "scan", "--config", rules, "--json", "--output", raw_path, "--no-git-ignore", repo],
+            [semgrep, "scan", "--config", rules, "--json", "--output", raw_path, "--no-git-ignore", "--disable-nosemgrep", repo],
             text=True,
             capture_output=True,
             timeout=280,
@@ -45,6 +45,9 @@ def main():
         except (FileNotFoundError, json.JSONDecodeError) as exc:
             write({"status": "error", "findings": [], "diagnostics": f"semgrep wrote no valid JSON: {exc}; stderr: {proc.stderr[-1000:]}", "scanner": {"name": "semgrep", "version": version}})
             return 0
+    if not isinstance(payload, dict):
+        write({"status": "error", "findings": [], "diagnostics": "semgrep report JSON is not an object", "scanner": {"name": "semgrep", "version": version}})
+        return 0
     findings = []
     for item in payload.get("results", []):
         extra = item.get("extra") or {}
@@ -68,5 +71,18 @@ def main():
     return 0
 
 
+def run():
+    try:
+        return main()
+    except subprocess.TimeoutExpired as exc:
+        write({
+            "status": "error",
+            "findings": [],
+            "diagnostics": f"semgrep timed out after {exc.timeout}s",
+            "scanner": {"name": "semgrep"},
+        })
+        return 0
+
+
 if __name__ == "__main__":
-    sys.exit(main())
+    sys.exit(run())

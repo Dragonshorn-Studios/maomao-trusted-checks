@@ -62,8 +62,16 @@ def main():
                 "scanner": {"name": "gitleaks", "version": version},
             })
             return 0
+    if not isinstance(entries, list):
+        write({
+            "status": "error",
+            "findings": [],
+            "diagnostics": "gitleaks report JSON is not a findings list",
+            "scanner": {"name": "gitleaks", "version": version},
+        })
+        return 0
     findings = []
-    for item in entries if isinstance(entries, list) else []:
+    for item in entries:
         secret = str(item.get("Secret") or "")
         fingerprint = hashlib.sha256(secret.encode()).hexdigest()[:16] if secret else "unavailable"
         findings.append({
@@ -85,5 +93,18 @@ def main():
     return 0
 
 
+def run():
+    try:
+        return main()
+    except subprocess.TimeoutExpired as exc:
+        write({
+            "status": "error",
+            "findings": [],
+            "diagnostics": f"gitleaks timed out after {exc.timeout}s",
+            "scanner": {"name": "gitleaks"},
+        })
+        return 0
+
+
 if __name__ == "__main__":
-    sys.exit(main())
+    sys.exit(run())
