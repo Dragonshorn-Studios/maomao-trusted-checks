@@ -19,6 +19,9 @@ def write(result):
 def main():
     repo = os.environ["MAOMAO_REPO_DIR"]
     trusted = os.environ.get("MAOMAO_TRUSTED_DIR", "")
+    if not trusted:
+        write({"status": "error", "findings": [], "diagnostics": "MAOMAO_TRUSTED_DIR is not set", "scanner": {"name": "semgrep"}})
+        return 0
     rules = os.path.join(trusted, "semgrep-rules")
     semgrep = shutil.which("semgrep")
     if not semgrep:
@@ -57,7 +60,7 @@ def main():
     errors = payload.get("errors") or []
     diagnostics = "\n".join(str(error.get("message") or error) for error in errors[:10]) or (proc.stderr[-2000:] if proc.returncode not in (0, 1) else "")
     write({
-        "status": "failure" if findings else ("error" if proc.returncode not in (0, 1) and errors else "success"),
+        "status": "error" if proc.returncode not in (0, 1) else ("failure" if findings else "success"),
         "findings": findings,
         "diagnostics": diagnostics,
         "scanner": {"name": "semgrep", "version": version},

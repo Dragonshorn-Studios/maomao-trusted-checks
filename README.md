@@ -11,7 +11,7 @@ Operator-pinned deterministic checks executed by [Maomao](https://github.com/Dra
 
 ## Runtime prerequisites
 
-The Maomao host must provide `python3`, `gitleaks`, `semgrep`, `bubblewrap` (`bwrap`), and `prlimit`. Scanner binaries are deliberately not vendored here.
+The Maomao host must provide `python3`, `gitleaks`, `semgrep`, `bubblewrap` (`bwrap`), and `prlimit`. Scanner binaries are deliberately not vendored here. Maomao supplies `MAOMAO_REPO_DIR`, `MAOMAO_RESULT_PATH`, `MAOMAO_DIFF_PATH`, `MAOMAO_CHECK_NAME`, `MAOMAO_CHECK_REVISION`, and `MAOMAO_TRUSTED_DIR` to each wrapper.
 
 ## Update workflow
 

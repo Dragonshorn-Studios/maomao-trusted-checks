@@ -4,7 +4,7 @@
     "secrets": {
       "path": "checks/secrets/gitleaks.py",
       "interpreter": "python3",
-      "timeoutMs": 120000
+      "timeoutMs": 130000
     },
     "security": {
       "path": "checks/security/semgrep.py",

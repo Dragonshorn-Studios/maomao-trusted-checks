@@ -7,10 +7,10 @@ rules:
       - pattern-either:
           - pattern: eval(...)
           - pattern: exec(...)
-  - id: maomao.child-process-shell-true
+  - id: maomao.child-process-shell-exec
     languages: [javascript, typescript]
     severity: ERROR
-    message: Avoid shell:true with dynamically controlled commands.
+    message: Review child_process shell execution for dynamically controlled commands.
     pattern-either:
       - pattern: child_process.exec(...)
       - pattern: exec(...)

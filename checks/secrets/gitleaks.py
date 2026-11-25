@@ -35,11 +35,25 @@ def main():
             capture_output=True,
             timeout=110,
         )
+        if proc.returncode != 0:
+            write({
+                "status": "error",
+                "findings": [],
+                "diagnostics": f"gitleaks exited with {proc.returncode}; stderr: {proc.stderr[-1000:]}",
+                "scanner": {"name": "gitleaks", "version": version},
+            })
+            return 0
         try:
             with open(raw_path, encoding="utf-8") as handle:
                 entries = json.load(handle)
         except FileNotFoundError:
-            entries = []
+            write({
+                "status": "error",
+                "findings": [],
+                "diagnostics": f"gitleaks wrote no report; stderr: {proc.stderr[-1000:]}",
+                "scanner": {"name": "gitleaks", "version": version},
+            })
+            return 0
         except json.JSONDecodeError as exc:
             write({
                 "status": "error",
@@ -65,7 +79,7 @@ def main():
     write({
         "status": "failure" if findings else "success",
         "findings": findings,
-        "diagnostics": proc.stderr[-2000:] if proc.returncode not in (0, 1) else "",
+        "diagnostics": proc.stderr[-2000:],
         "scanner": {"name": "gitleaks", "version": version},
     })
     return 0

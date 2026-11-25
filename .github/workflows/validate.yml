@@ -17,3 +17,5 @@ jobs:
         run: python3 -m json.tool maomao-trusted-checks.json >/dev/null
       - name: Compile Python wrappers
         run: python3 -m py_compile checks/secrets/gitleaks.py checks/security/semgrep.py
+      - name: Run wrapper contract tests
+        run: python3 -m unittest discover -s tests -v
