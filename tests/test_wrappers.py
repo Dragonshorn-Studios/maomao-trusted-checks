@@ -140,9 +140,10 @@ class WrapperContractTest(unittest.TestCase):
         self.assertEqual(result["status"], "error")
         self.assertIn("semgrep-rules", result["diagnostics"])
 
-    def test_semgrep_disables_nosemgrep(self):
+    def test_semgrep_disables_nosem(self):
         self.run_wrapper("checks/security/semgrep.py", "semgrep")
-        self.assertIn("--disable-nosemgrep", self.last_argv)
+        self.assertIn("--disable-nosem", self.last_argv)
+        self.assertNotIn("--disable-nosemgrep", self.last_argv)
 
     def test_semgrep_maps_severity_and_failure_status(self):
         report = json.dumps({"results": [{
