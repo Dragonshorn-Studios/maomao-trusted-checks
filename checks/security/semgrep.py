@@ -34,7 +34,7 @@ def main():
     with tempfile.TemporaryDirectory() as temp:
         raw_path = os.path.join(temp, "semgrep.json")
         proc = subprocess.run(
-            [semgrep, "scan", "--config", rules, "--json", "--output", raw_path, "--no-git-ignore", "--disable-nosemgrep", repo],
+            [semgrep, "scan", "--config", rules, "--json", "--output", raw_path, "--no-git-ignore", "--disable-nosem", repo],
             text=True,
             capture_output=True,
             timeout=280,
